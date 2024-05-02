@@ -1,0 +1,104 @@
+>>>malloy
+source: kings_general is duckdb.table('Data/Parquet/General/NBA/Sacramento_Kings_restaurants.parquet') extend {
+measure: kings_business_count is count()
+}
+>>>malloy
+source: lakers_general is duckdb.table('Data/Parquet/General/NBA/Los_Angeles_Lakers_restaurants.parquet') extend {
+measure: lakers_business_count is count()
+}
+>>>malloy
+source: clippers_general is duckdb.table('Data/Parquet/General/NBA/Los_Angeles_Clippers_restaurants.parquet') extend {
+measure: clippers_business_count is count()
+}
+>>>malloy
+source: warriors_general is duckdb.table('Data/Parquet/General/NBA/Golden_State_Warriors_restaurants.parquet') extend {
+measure: warriors_business_count is count()
+}
+>>>malloy
+run: kings_general -> {
+    select: businesses.name, businesses.price, businesses.rating
+    limit: 10
+}
+>>>malloy
+
+run: lakers_general -> {
+    select: businesses.name, businesses.price, businesses.rating
+    limit: 10
+}
+>>>malloy
+
+run: clippers_general -> {
+    select: businesses.name, businesses.price, businesses.rating
+    limit: 10}
+>>>malloy
+
+run: warriors_general -> {
+    select: businesses.name, businesses.price, businesses.rating
+    limit: 10
+}
+>>>malloy
+# bar_chart
+run: kings_general -> {
+  group_by: businesses.price
+  aggregate: kings_business_count
+}
+>>>malloy
+run: kings_general -> {
+  group_by: businesses.price
+  # percent
+  aggregate: percent_of_price is kings_business_count / all(kings_business_count)
+}
+>>>malloy
+run: kings_general -> {
+  aggregate: avg_rating is businesses.rating.sum() / kings_business_count
+}
+>>>malloy
+# bar_chart
+run: lakers_general -> {
+  group_by: businesses.price
+  aggregate: lakers_business_count
+}
+>>>malloy
+run: lakers_general -> {
+  group_by: businesses.price
+  # percent
+  aggregate: percent_of_price is lakers_business_count / all(lakers_business_count)
+}
+>>>malloy
+run: lakers_general -> {
+  aggregate: avg_rating is businesses.rating.sum() / lakers_business_count
+}
+>>>malloy
+# bar_chart
+run: warriors_general -> {
+  group_by: businesses.price
+  aggregate: warriors_business_count
+}
+>>>malloy
+run: warriors_general -> {
+  group_by: businesses.price
+  # percent
+  aggregate: percent_of_price is warriors_business_count / all(warriors_business_count)
+}
+>>>malloy
+run: warriors_general -> {
+  aggregate: avg_rating is businesses.rating.sum() / warriors_business_count
+}
+>>>malloy
+# scatter_chart
+run: kings_general -> {
+  group_by: businesses.distance
+  group_by: businesses.rating
+}
+>>>malloy
+# scatter_chart
+run: lakers_general -> {
+  group_by: businesses.distance
+  group_by: businesses.rating
+}
+>>>malloy
+# scatter_chart
+run: warriors_general -> {
+  group_by: businesses.distance
+  group_by: businesses.rating
+}
